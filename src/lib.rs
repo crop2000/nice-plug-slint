@@ -37,8 +37,6 @@ type SetupHandler<T> = dyn Fn(&WindowHandler<T>, &mut Window) + Send + Sync;
 pub struct SlintEditorState {
     #[serde(with = "nih_plug::params::persist::serialize_atomic_cell")]
     pub size: AtomicCell<(u32, u32)>,
-    #[serde(with = "nih_plug::params::persist::serialize_atomic_cell")]
-    pub scale_factor: AtomicCell<f32>,
 }
 
 fn default_width() -> u32 {
@@ -47,14 +45,10 @@ fn default_width() -> u32 {
 fn default_height() -> u32 {
     300
 }
-fn default_scale() -> f32 {
-    1.0
-}
 
 impl<'a> PersistentField<'a, SlintEditorState> for Arc<SlintEditorState> {
     fn set(&self, new_value: SlintEditorState) {
         self.size.store(new_value.size.load());
-        self.scale_factor.store(new_value.scale_factor.load());
     }
 
     fn map<F, R>(&self, f: F) -> R
@@ -69,7 +63,6 @@ impl Default for SlintEditorState {
     fn default() -> Self {
         Self {
             size: AtomicCell::new((default_width(), default_height())),
-            scale_factor: default_scale().into(),
         }
     }
 }
@@ -78,7 +71,6 @@ impl SlintEditorState {
     pub fn new(width: u32, height: u32) -> Self {
         Self {
             size: AtomicCell::new((width, height)),
-            scale_factor: AtomicCell::new(1.0),
         }
     }
 
