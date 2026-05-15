@@ -1,6 +1,6 @@
 # nih-plug-slint
 
-An adapter for using [Slint](https://slint.dev/) GUIs with [NIH-plug](https://github.com/robbert-vdh/nih-plug) audio plugins. It uses baseview for windowing and FemtoVG (OpenGL) for rendering, so you get native plugin windows without a webview.
+An adapter for using [Slint](https://slint.dev/) GUIs with [NIH-plug](https://github.com/robbert-vdh/nih-plug) audio plugins. It uses baseview for windowing and FemtoVG (OpenGL) for rendering
 
 ## Example
 
