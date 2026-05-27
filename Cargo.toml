@@ -8,7 +8,7 @@ keywords = ["audio", "plugin", "vst3", "clap", "slint"]
 categories = ["multimedia::audio"]
 
 [dependencies]
-nih_plug = { git = "https://github.com/robbert-vdh/nih-plug.git" }
+nice-plug-core = { git = "https://codeberg.org/RustAudio/nice-plug" }
 baseview = { git = "https://github.com/RustAudio/baseview.git", features = ["opengl"] }
 slint = { version = "=1.15.1", default-features = false, features = ["std", "renderer-femtovg", "raw-window-handle-06", "compat-1-2"] }
 i-slint-renderer-femtovg = { version = "=1.15.1", features = ["opengl"] }
