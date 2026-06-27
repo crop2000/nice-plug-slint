@@ -1,0 +1,129 @@
+export component Knob inherits Rectangle {
+    in property <string> label: "KNOB";
+    in-out property <float> value: 0.5;
+    in property <float> minimum: 0.0;
+    in property <float> maximum: 1.0;
+    callback changed(float);
+    callback begin-drag();
+    callback end-drag();
+
+    width: 180px;
+    height: 180px;
+
+    property <float> knob-scale: root.width / 180px;
+    property <float> norm-value: (value - minimum) / (maximum - minimum);
+    property <angle> arc-progress: 0.75turn + norm-value * 0.5turn;
+
+    // Outer glow ring — glows blue-cyan when value is non-zero
+    Rectangle {
+        width: root.width;
+        height: root.height;
+        x: 0;
+        y: 0;
+        border-radius: self.width / 2;
+        background: transparent;
+        border-color: rgba(59, 130, 246, root.norm-value * 0.25);
+        border-width: 6px * root.knob-scale;
+    }
+
+    // Knob body — dark radial gradient
+    Rectangle {
+        width: root.width * 0.62;
+        height: root.height * 0.62;
+        x: (parent.width - self.width) / 2;
+        y: (parent.height - self.height) / 2;
+        border-radius: self.width / 2;
+        background: @radial-gradient(circle, #323232, #0f0f0f);
+
+        // Inner shadow ring
+        border-color: #181818;
+        border-width: 2px;
+
+        // Indicator dot
+        Rectangle {
+            width: 9px * root.knob-scale;
+            height: 9px * root.knob-scale;
+            border-radius: self.width / 2;
+            background: white;
+
+            property <float> radius: 0.72;
+            x: parent.width / 2 - self.width / 2 + (parent.width / 2) * radius * (-sin(-root.arc-progress));
+            y: parent.height / 2 - self.height / 2 + (parent.height / 2) * radius * (-cos(-root.arc-progress));
+        }
+    }
+
+    // Track arc (full range, dimmed)
+    Path {
+        viewbox-width: 1;
+        viewbox-height: 1;
+        width: parent.width;
+        height: parent.height;
+        stroke-width: 4px * root.knob-scale;
+        stroke: rgba(255, 255, 255, 0.06);
+
+        MoveTo {
+            x: 0.5 - 0.38 * sin(-(0.75turn));
+            y: 0.5 - 0.38 * cos(-(0.75turn));
+        }
+        ArcTo {
+            radius-x: 0.38;
+            radius-y: 0.38;
+            x: 0.5 - 0.38 * sin(-(1.25turn));
+            y: 0.5 - 0.38 * cos(-(1.25turn));
+            sweep: true;
+            large-arc: true;
+        }
+    }
+
+    // Value arc (progress, blue-cyan gradient)
+    Path {
+        viewbox-width: 1;
+        viewbox-height: 1;
+        width: parent.width;
+        height: parent.height;
+        stroke-width: 5px * root.knob-scale;
+        stroke: @linear-gradient(90deg, #3b82f6 0%, #06b6d4 100%);
+
+        MoveTo {
+            x: 0.5 - 0.38 * sin(-(0.75turn));
+            y: 0.5 - 0.38 * cos(-(0.75turn));
+        }
+        ArcTo {
+            radius-x: 0.38;
+            radius-y: 0.38;
+            x: 0.5 - 0.38 * sin(-(0.75turn + root.norm-value * 0.5turn));
+            y: 0.5 - 0.38 * cos(-(0.75turn + root.norm-value * 0.5turn));
+            sweep: root.norm-value > 0;
+            large-arc: false;
+        }
+    }
+
+    // Drag interaction
+    TouchArea {
+        width: root.width;
+        height: root.height;
+        mouse-cursor: ns-resize;
+
+        property <float> start-val: root.value;
+        property <float> start-y: 0;
+
+        pointer-event(event) => {
+            if (event.button == PointerEventButton.left && event.kind == PointerEventKind.down) {
+                self.start-val = root.value;
+                self.start-y = self.mouse-y / 1px;
+                root.begin-drag();
+            }
+            if (event.button == PointerEventButton.left && event.kind == PointerEventKind.up) {
+                root.end-drag();
+            }
+        }
+
+        moved => {
+            if (self.pressed) {
+                root.value = self.start-val + (self.start-y - self.mouse-y / 1px) * (root.maximum - root.minimum) / (220 * root.knob-scale);
+                root.value = max(root.minimum, min(root.maximum, root.value));
+                root.changed(root.value);
+            }
+        }
+    }
+}
