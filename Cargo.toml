@@ -7,11 +7,20 @@ description = "An adapter to use Slint GUIs with nice-plug"
 keywords = ["audio", "plugin", "vst3", "clap", "slint"]
 categories = ["multimedia::audio"]
 
+
+[workspace.dependencies]
+baseview = { version = "0.1.4", features = ["opengl"] }
+
 [dependencies]
 nice-plug-core = { git = "https://codeberg.org/RustAudio/nice-plug" }
 baseview = { version = "0.1.1", features = ["opengl"] }
-slint = { version = "=1.16.1", default-features = false, features = ["std", "renderer-femtovg", "raw-window-handle-06", "compat-1-2"] }
-i-slint-renderer-femtovg = { version = "=1.16.1", features = ["opengl"] }
+slint = { version = "=1.17.0", default-features = false, features = [
+  "std",
+  "renderer-femtovg",
+  "raw-window-handle-06",
+  "compat-1-2",
+] }
+i-slint-renderer-femtovg = { version = "=1.17.0", features = ["opengl"] }
 raw-window-handle = "0.6"
 crossbeam = "0.8"
 once_cell = "1.21.4"
@@ -23,3 +32,10 @@ keyboard-types = { version = "0.6.2", default-features = false }
 
 [features]
 default = []
+
+[workspace]
+members = [
+  "examples/open_parented",
+  "examples/open_window",
+  "examples/render_femtovg",
+]
