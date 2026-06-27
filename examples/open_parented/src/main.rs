@@ -25,7 +25,7 @@ impl ParentWindowHandler {
         let ctx = unsafe { softbuffer::Context::new(parent) }.unwrap();
         let mut surface = unsafe { softbuffer::Surface::new(&ctx, parent) }.unwrap();
         surface
-            .resize(NonZeroU32::new(512).unwrap(), NonZeroU32::new(512).unwrap())
+            .resize(NonZeroU32::new(256).unwrap(), NonZeroU32::new(256).unwrap())
             .unwrap();
 
         let options = WindowOpenOptions::new()
@@ -106,7 +106,7 @@ impl ParentWindowHandler {
                 // Defer show() until on_frame so the GL context is current when FemtoVG
                 // queries GL_VERSION during its first render.
 
-                let state = Arc::new(SlintEditorState::new(200, 220));
+                let state = Arc::new(SlintEditorState::new(256, 256));
                 window_handler::WindowHandler {
                     // context,
                     // event_loop_handler,
@@ -121,7 +121,7 @@ impl ParentWindowHandler {
                     prevent_key_event_propagation: RefCell::new(false),
                 }
             });
-        let current_size = WindowInfo::from_physical_size(PhySize::new(512, 512), 1.0);
+        let current_size = WindowInfo::from_physical_size(PhySize::new(256, 256), 1.0);
         println!("current_size in open blocking: {:?}", current_size);
 
         // TODO: no way to query physical size initially?
@@ -181,7 +181,7 @@ impl ChildWindowHandler {
         let ctx = unsafe { softbuffer::Context::new(window) }.unwrap();
         let mut surface = unsafe { softbuffer::Surface::new(&ctx, window) }.unwrap();
         surface
-            .resize(NonZeroU32::new(512).unwrap(), NonZeroU32::new(512).unwrap())
+            .resize(NonZeroU32::new(256).unwrap(), NonZeroU32::new(256).unwrap())
             .unwrap();
 
         // TODO: no way to query physical size initially?
@@ -229,7 +229,7 @@ impl WindowHandler for ChildWindowHandler {
 }
 
 fn main() {
-    let window_open_options = WindowOpenOptions::new().with_size(512.0, 512.0);
+    let window_open_options = WindowOpenOptions::new().with_size(256.0, 256.0);
 
     Window::open_blocking(window_open_options, ParentWindowHandler::new);
 }
